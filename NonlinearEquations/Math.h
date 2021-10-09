@@ -6,9 +6,6 @@
 
 namespace NumericalCalculus
 {
-	using LowerBorder = int;
-	using UpperBorder = int;
-	using Scope = std::pair<LowerBorder, UpperBorder>;
 	class Math
 	{
 		enum class TypeOfRoot {
@@ -16,6 +13,6 @@ namespace NumericalCalculus
 			MaxPositive
 		};
 	public:
-		static double Relaxation(Polynomial polynomial, double precision, Scope scope, TypeOfRoot type);
+		static double Relaxation(Polynomial polynomial, double precision, Interval interval, TypeOfRoot type);
 	};
 }

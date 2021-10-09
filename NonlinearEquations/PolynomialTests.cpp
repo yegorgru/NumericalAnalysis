@@ -78,3 +78,33 @@ TEST_CASE("take derivative test") {
     }
     CHECK(polynomial.takeDerivative().getMonomials() == expectedDerivative.getMonomials());
 }
+
+TEST_CASE("is increasing, is positive test") {
+    Polynomial pol({
+        { 2, 1 },
+        { 0, -1 }
+    });
+    CHECK(pol.isIncreasing({ 0, 2 }, 0.05));
+    CHECK_FALSE(pol.isIncreasing({ -2, 0 }, 0.05));
+    CHECK_FALSE(pol.isPositive({ 0, 1 }, 0.05));
+    CHECK_FALSE(pol.isPositive({ -1, 0 }, 0.05));
+    CHECK(pol.isPositive({ 1, 2 }, 0.05));
+    CHECK(pol.isPositive({ -2, -1 }, 0.05));
+    CHECK(pol.isNegative({ 0, 1 }, 0.05));
+    CHECK(pol.isNegative({ -1, 0 }, 0.05));
+    CHECK_FALSE(pol.isNegative({ 1, 2 }, 0.05));
+    CHECK_FALSE(pol.isNegative({ -2, -1 }, 0.05));
+}
+
+TEST_CASE("get value test") {
+    Polynomial pol({
+        { 2, 1 },
+        { 0, -1 }
+    });
+    CHECK_EQ(pol.getValue(0), -1.0);
+    CHECK_EQ(pol.getValue(1), 0.0);
+    CHECK_EQ(pol.getValue(2), 3.0);
+    CHECK_EQ(pol.getValue(-1), 0.0);
+    CHECK_EQ(pol.getValue(-2), 3.0);
+    CHECK_EQ(pol.getValue(0.5), -0.75);
+}
