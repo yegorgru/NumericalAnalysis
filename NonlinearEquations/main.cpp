@@ -41,4 +41,18 @@ int main()
             std::cout << "\t" << std::left << std::setw(20) << i << std::setw(20) << result[i].first << std::setw(20) << result[i].second << std::endl;
         }
     }
+    std::cout << "========================================================================" << std::endl
+        << "Secant:" << std::endl;
+    {
+        auto result = Math::Secant(Polynomial({
+            {3, 1},
+            {2, 1},
+            {1, -4},
+            {0, -4},
+            }), 0.001, { 1.5, 2.5 });
+        std::cout << "\t" << std::left << std::setw(20) << "n" << std::setw(20) << "xn" << std::setw(20) << "f(xn)" << std::endl;
+        for (size_t i = 0; i < result.size(); i++) {
+            std::cout << "\t" << std::left << std::setw(20) << i << std::setw(20) << result[i].first << std::setw(20) << result[i].second << std::endl;
+        }
+    }
 }

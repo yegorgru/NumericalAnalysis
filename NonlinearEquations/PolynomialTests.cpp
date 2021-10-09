@@ -1,5 +1,4 @@
 #include "Polynomial.h"
-#include <iostream>
 
 #include "doctest.h"
 
