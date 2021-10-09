@@ -55,6 +55,32 @@ namespace NumericalCalculus
 		return d.isPositive(interval, gaps);
 	}
 
+	Point Polynomial::findMin(Interval interval, double gaps) const
+	{
+		Point min{0, INT_MAX};
+		for (double i = interval.first; i <= interval.second; i += gaps) {
+			auto value = getValue(i);
+			if (value < min.second) {
+				min.first = i;
+				min.second = value;
+			}
+		}
+		return min;
+	}
+
+	Point Polynomial::findMax(Interval interval, double gaps) const
+	{
+		Point max{ 0, INT_MIN };
+		for (double i = interval.first; i <= interval.second; i += gaps) {
+			auto value = getValue(i);
+			if (value > max.second) {
+				max.first = i;
+				max.second = value;
+			}
+		}
+		return max;
+	}
+
 	const Polynomial::Monomials& Polynomial::getMonomials() const
 	{
 		return mMonomials;

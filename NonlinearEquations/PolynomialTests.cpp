@@ -1,4 +1,5 @@
 #include "Polynomial.h"
+#include <iostream>
 
 #include "doctest.h"
 
@@ -107,4 +108,17 @@ TEST_CASE("get value test") {
     CHECK_EQ(pol.getValue(-1), 0.0);
     CHECK_EQ(pol.getValue(-2), 3.0);
     CHECK_EQ(pol.getValue(0.5), -0.75);
+}
+
+TEST_CASE("min max test") {
+    Polynomial pol({
+        { 2, 1 },
+        { 0, -1 }
+    });
+    auto min = pol.findMin({ -2, 2 }, 0.001);
+    CHECK(std::abs(min.first - 0.0) < 0.000001);
+    CHECK(std::abs(min.second + 1.0) < 0.000001);
+    auto max = pol.findMax({ 0, 2 }, 0.001);
+    CHECK(std::abs(max.first - 2.0) < 0.000001);
+    CHECK(std::abs(max.second - 3.0) < 0.000001);
 }

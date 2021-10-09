@@ -6,9 +6,8 @@
 namespace NumericalCalculus
 {
 
-using LowerBorder = double;
-using UpperBorder = double;
-using Interval = std::pair<LowerBorder, UpperBorder>;
+using Interval = std::pair<double, double>;
+using Point = std::pair<double, double>;
 
 class Polynomial
 {
@@ -25,6 +24,8 @@ public:
 	bool isPositive(Interval interval, double gaps) const;
 	bool isNegative(Interval interval, double gaps) const;
 	bool isIncreasing(Interval interval, double gaps) const;
+	Point findMin(Interval interval, double gaps) const;
+	Point findMax(Interval interval, double gaps) const;
 public:
 	const Monomials& getMonomials() const;
 private:
