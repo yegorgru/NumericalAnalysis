@@ -1,11 +1,10 @@
 #include "Math.h"
 
 #include <stdexcept>
-#include <iostream>
 
 namespace NumericalCalculus
 {
-	Point Math::Relaxation(Polynomial polynomial, double precision, Interval interval)
+	Point Math::Relaxation(Polynomial polynomial, double precision, Interval interval, std::ostream& os)
 	{
 		Polynomial firstDerivative = polynomial.takeDerivative();
 		Polynomial secondDerivative = firstDerivative.takeDerivative();
@@ -30,7 +29,7 @@ namespace NumericalCalculus
 		int n = std::log(z0 / precision) / std::log(1 / q) + 1;
 		double x = interval.second;
 		double value = polynomial.getValue(x);
-		std::cout << 0 << " " << x << " " << " " << value << std::endl;
+		os << 0 << " " << x << " " << " " << value << std::endl;
 		for (int i = 1; i <= n; i++) {
 			if (isTPositive) {
 				x = x + t * value;
@@ -39,7 +38,7 @@ namespace NumericalCalculus
 				x = x - t * value;
 			}
 			value = polynomial.getValue(x);
-			std::cout << i << " " << x << " " << " " << value << std::endl;
+			os << i << " " << x << " " << " " << value << std::endl;
 		}
 		return Point{ x, value };
 	}
