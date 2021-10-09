@@ -95,7 +95,7 @@ namespace NumericalCalculus
 		double x = interval.second;
 		double maxMistake = std::max(std::abs(x - interval.second), std::abs(x - interval.first));
 		double q = M.second * maxMistake / 2 / m.second;
-		while (polynomial.getValue(x) * secondDerivative.getValue(x) <= 0 || q > 1) {
+		while (polynomial.getValue(x) * secondDerivative.getValue(x) <= 0 || q >= 1) {
 			x -= precision;
 			maxMistake = std::max(std::abs(x - interval.second), std::abs(x - interval.first));
 			q = M.second * maxMistake / 2 / m.second;
@@ -106,7 +106,7 @@ namespace NumericalCalculus
 		double x1 = x - precision;
 		maxMistake = std::max(std::abs(x1 - interval.second), std::abs(x1 - interval.first));
 		q = M.second * maxMistake / 2 / m.second;
-		while (polynomial.getValue(x1) * secondDerivative.getValue(x1) <= 0 || q > 1) {
+		while (polynomial.getValue(x1) * secondDerivative.getValue(x1) <= 0 || q >= 1) {
 			x1 -= precision;
 			maxMistake = std::max(std::abs(x1 - interval.second), std::abs(x1 - interval.first));
 			q = M.second * maxMistake / 2 / m.second;
