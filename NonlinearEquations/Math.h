@@ -8,9 +8,12 @@
 
 namespace NumericalCalculus
 {
+	using Iterations = std::vector<Point>;
+
 	class Math
 	{
 	public:
-		static std::vector<Point> Relaxation(Polynomial polynomial, double precision, Interval interval);
+		static Iterations Relaxation(Polynomial polynomial, double precision, Interval interval);
+		static Iterations Newton(Polynomial polynomial, double precision, Interval interval);
 	};
 }

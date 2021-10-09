@@ -61,11 +61,23 @@ namespace NumericalCalculus
 		return d.isNegative(interval, gaps);
 	}
 
-	Point Polynomial::findMin(Interval interval, double gaps) const
+	bool Polynomial::changeSign(Interval interval, double gaps) const
+	{
+		bool sign = getValue(interval.first) > 0.0;
+		for (double i = interval.first + gaps; i <= interval.second; i += gaps) {
+			auto value = getValue(i);
+			if (value > 0 && !sign || value < 0 && sign) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	Point Polynomial::findAbsMin(Interval interval, double gaps) const
 	{
 		Point min{0, INT_MAX};
 		for (double i = interval.first; i <= interval.second; i += gaps) {
-			auto value = getValue(i);
+			auto value = std::abs(getValue(i));
 			if (value < min.second) {
 				min.first = i;
 				min.second = value;
@@ -74,11 +86,11 @@ namespace NumericalCalculus
 		return min;
 	}
 
-	Point Polynomial::findMax(Interval interval, double gaps) const
+	Point Polynomial::findAbsMax(Interval interval, double gaps) const
 	{
 		Point max{ 0, INT_MIN };
 		for (double i = interval.first; i <= interval.second; i += gaps) {
-			auto value = getValue(i);
+			auto value = std::abs(getValue(i));
 			if (value > max.second) {
 				max.first = i;
 				max.second = value;

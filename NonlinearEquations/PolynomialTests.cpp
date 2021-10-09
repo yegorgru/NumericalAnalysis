@@ -99,6 +99,18 @@ TEST_CASE("is increasing, is positive, is decreasing, is negative test") {
     CHECK_FALSE(pol.isNegative({ -2, -1 }, 0.05));
 }
 
+TEST_CASE("change sign test") {
+    Polynomial pol({
+        { 2, 1 },
+        { 0, -1 }
+        });
+    CHECK(pol.changeSign({ 0, 2 }, 0.05));
+    CHECK_FALSE(pol.changeSign({ 2, 3 }, 0.05));
+    CHECK(pol.changeSign({ -2, 0 }, 0.05));
+    CHECK_FALSE(pol.changeSign({ -3, -2 }, 0.05));
+    CHECK_FALSE(pol.changeSign({ -0.5, 0.5 }, 0.05));
+}
+
 TEST_CASE("get value test") {
     Polynomial pol({
         { 2, 1 },
@@ -117,10 +129,10 @@ TEST_CASE("min max test") {
         { 2, 1 },
         { 0, -1 }
     });
-    auto min = pol.findMin({ -2, 2 }, 0.001);
-    CHECK(std::abs(min.first - 0.0) < 0.000001);
-    CHECK(std::abs(min.second + 1.0) < 0.000001);
-    auto max = pol.findMax({ 0, 2 }, 0.001);
+    auto min = pol.findAbsMin({ -0.5, 2 }, 0.001);
+    CHECK(std::abs(min.first - 1.0) < 0.000001);
+    CHECK(min.second < 0.000001);
+    auto max = pol.findAbsMax({ 0, 2 }, 0.001);
     CHECK(std::abs(max.first - 2.0) < 0.000001);
     CHECK(std::abs(max.second - 3.0) < 0.000001);
 }

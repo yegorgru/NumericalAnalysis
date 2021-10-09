@@ -15,14 +15,30 @@ int main()
 
     std::cout << "========================================================================" << std::endl
         << "Relaxation:" << std::endl;
-    auto result = Math::Relaxation(Polynomial({
-        {3, 1},
-        {2, -6},
-        {1, 5},
-        {0, 12},
-    }), 0.001, { -2, 0 });
-    std::cout << "\t" << std::left << std::setw(20) << "n" << std::setw(20) << "xn" << std::setw(20) << "f(xn)" << std::endl;
-    for (size_t i = 0; i < result.size(); i++) {
-        std::cout << "\t" << std::left << std::setw(20) << i << std::setw(20) << result[i].first << std::setw(20) << result[i].second << std::endl;
+    {
+        auto result = Math::Relaxation(Polynomial({
+            {3, 1},
+            {2, -6},
+            {1, 5},
+            {0, 12},
+            }), 0.001, { -2, 0 });
+        std::cout << "\t" << std::left << std::setw(20) << "n" << std::setw(20) << "xn" << std::setw(20) << "f(xn)" << std::endl;
+        for (size_t i = 0; i < result.size(); i++) {
+            std::cout << "\t" << std::left << std::setw(20) << i << std::setw(20) << result[i].first << std::setw(20) << result[i].second << std::endl;
+        }
+    }
+    std::cout << "========================================================================" << std::endl
+        << "Newton:" << std::endl;
+    {
+        auto result = Math::Newton(Polynomial({
+            {3, 1},
+            {2, 3},
+            {1, -1},
+            {0, -3},
+            }), 0.001, { 0.6, 1.4 });
+        std::cout << "\t" << std::left << std::setw(20) << "n" << std::setw(20) << "xn" << std::setw(20) << "f(xn)" << std::endl;
+        for (size_t i = 0; i < result.size(); i++) {
+            std::cout << "\t" << std::left << std::setw(20) << i << std::setw(20) << result[i].first << std::setw(20) << result[i].second << std::endl;
+        }
     }
 }

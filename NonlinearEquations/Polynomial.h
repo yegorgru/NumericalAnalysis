@@ -25,8 +25,9 @@ public:
 	bool isNegative(Interval interval, double gaps) const;
 	bool isIncreasing(Interval interval, double gaps) const;
 	bool isDecreasing(Interval interval, double gaps) const;
-	Point findMin(Interval interval, double gaps) const;
-	Point findMax(Interval interval, double gaps) const;
+	bool changeSign(Interval interval, double gaps) const;
+	Point findAbsMin(Interval interval, double gaps) const;
+	Point findAbsMax(Interval interval, double gaps) const;
 public:
 	const Monomials& getMonomials() const;
 private:
