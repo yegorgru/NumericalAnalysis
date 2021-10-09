@@ -55,6 +55,12 @@ namespace NumericalCalculus
 		return d.isPositive(interval, gaps);
 	}
 
+	bool Polynomial::isDecreasing(Interval interval, double gaps) const
+	{
+		Polynomial d = takeDerivative();
+		return d.isNegative(interval, gaps);
+	}
+
 	Point Polynomial::findMin(Interval interval, double gaps) const
 	{
 		Point min{0, INT_MAX};
