@@ -2,14 +2,10 @@
 
 namespace NumericalCalculus
 {
-	Polynomial Math::takeDerivative(const Polynomial& polinomial)
+	double Math::Relaxation(Polynomial polynomial, double precision, Scope scope, TypeOfRoot type)
 	{
-		Polynomial derivative;
-		for (const auto& [degree, coef] : polinomial) {
-			if (degree != 0) {
-				derivative[degree - 1] = degree * coef;
-			}
-		}
-		return derivative;
+		Polynomial firstDerivative = polynomial.takeDerivative();
+		Polynomial secondDerivative = firstDerivative.takeDerivative();
+		return 0.0;
 	}
 }
