@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 #include <iostream>
 
 #include "Polynomial.h"
@@ -10,6 +11,6 @@ namespace NumericalCalculus
 	class Math
 	{
 	public:
-		static Point Relaxation(Polynomial polynomial, double precision, Interval interval, std::ostream& os);
+		static std::vector<Point> Relaxation(Polynomial polynomial, double precision, Interval interval);
 	};
 }

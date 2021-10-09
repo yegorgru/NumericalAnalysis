@@ -4,7 +4,7 @@
 
 namespace NumericalCalculus
 {
-	Point Math::Relaxation(Polynomial polynomial, double precision, Interval interval, std::ostream& os)
+	std::vector<Point> Math::Relaxation(Polynomial polynomial, double precision, Interval interval)
 	{
 		Polynomial firstDerivative = polynomial.takeDerivative();
 		Polynomial secondDerivative = firstDerivative.takeDerivative();
@@ -29,7 +29,7 @@ namespace NumericalCalculus
 		int n = std::log(z0 / precision) / std::log(1 / q) + 1;
 		double x = interval.second;
 		double value = polynomial.getValue(x);
-		os << 0 << " " << x << " " << " " << value << std::endl;
+		std::vector<Point> result{ {x, value} };
 		for (int i = 1; i <= n; i++) {
 			if (isTPositive) {
 				x = x + t * value;
@@ -38,8 +38,8 @@ namespace NumericalCalculus
 				x = x - t * value;
 			}
 			value = polynomial.getValue(x);
-			os << i << " " << x << " " << " " << value << std::endl;
+			result.emplace_back(x, value);
 		}
-		return Point{ x, value };
+		return result;
 	}
 }
