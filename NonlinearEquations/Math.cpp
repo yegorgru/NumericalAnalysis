@@ -6,6 +6,10 @@ namespace NumericalCalculus
 {
 	Iterations Math::Relaxation(Polynomial polynomial, double precision, Interval interval)
 	{
+		if (interval.first > interval.second ||
+			polynomial.getValue(interval.first) * polynomial.getValue(interval.second) > 0) {
+			throw std::runtime_error("incorrect interval");
+		}
 		Polynomial firstDerivative = polynomial.takeDerivative();
 		bool isTPositive = firstDerivative.isNegative(interval, precision);
 		Point m = firstDerivative.findAbsMin(interval, precision);
@@ -25,7 +29,7 @@ namespace NumericalCalculus
 		double t = 2 / (m.second + M.second);
 		double q = (M.second - m.second) / (M.second + m.second);
 		double z0 = interval.second - interval.first;
-		int n = std::log(z0 / precision) / std::log(1 / q) + 1;
+		int n = static_cast<int>(std::log(z0 / precision) / std::log(1 / q) + 1);
 		double x = interval.second;
 		double value = polynomial.getValue(x);
 		Iterations result{ {x, value} };
@@ -44,8 +48,9 @@ namespace NumericalCalculus
 
 	Iterations Math::Newton(Polynomial polynomial, double precision, Interval interval)
 	{
-		if (polynomial.getValue(interval.first) * polynomial.getValue(interval.second) >= 0) {
-			throw std::runtime_error("values on sides of interval are not with different signs");
+		if (interval.first > interval.second ||
+			polynomial.getValue(interval.first) * polynomial.getValue(interval.second) > 0) {
+			throw std::runtime_error("incorrect interval");
 		}
 		Polynomial firstDerivative = polynomial.takeDerivative();
 		Polynomial secondDerivative = firstDerivative.takeDerivative();
@@ -65,15 +70,19 @@ namespace NumericalCalculus
 				throw std::runtime_error("the conditions of the theorem cannot be satisfied");
 			}
 		}
-		int n = std::log2(
-							(std::log((interval.second - interval.first) / precision) 
+		int n =static_cast<int>(std::log2(
+							(std::log(maxMistake / precision) 
 								/ 
 							std::log(1 / q) + 1)
-						) + 1;
+						) + 1);
 		double value = polynomial.getValue(x);
 		Iterations result{ {x, value} };
 		for (int i = 0; i < n; i++) {
-			x = x - value / firstDerivative.getValue(x);
+			auto firstDValue = firstDerivative.getValue(x);
+			if (firstDValue == 0.0) {
+				throw std::runtime_error("value of first derivative has to be not 0");
+			}
+			x = x - value / firstDValue;
 			value = polynomial.getValue(x);
 			result.emplace_back(x, value);
 		}
@@ -82,8 +91,9 @@ namespace NumericalCalculus
 
 	Iterations Math::Secant(Polynomial polynomial, double precision, Interval interval)
 	{
-		if (polynomial.getValue(interval.first) * polynomial.getValue(interval.second) >= 0) {
-			throw std::runtime_error("values on sides of interval are not with different signs");
+		if (interval.first > interval.second ||
+			polynomial.getValue(interval.first) * polynomial.getValue(interval.second) > 0) {
+			throw std::runtime_error("incorrect interval");
 		}
 		Polynomial firstDerivative = polynomial.takeDerivative();
 		Polynomial secondDerivative = firstDerivative.takeDerivative();
@@ -114,11 +124,11 @@ namespace NumericalCalculus
 				throw std::runtime_error("the conditions of the theorem cannot be satisfied");
 			}
 		}
-		int n = std::log2(
-			(std::log((interval.second - interval.first) / precision)
+		int n = static_cast<int>(std::log2(
+			(std::log(maxMistake / precision)
 				/
 				std::log(1 / q) + 1)
-		) + 1;
+		) + 1);
 		double value = polynomial.getValue(x);
 		double value1 = polynomial.getValue(x1);
 		Iterations result{ {x, value}, {x1, value1} };
@@ -133,7 +143,7 @@ namespace NumericalCalculus
 			value1 = nextValue;
 			result.emplace_back(x1, value1);
 			if (std::abs(value1) < precision) {
-				result.resize(n, { x, value1 });
+				result.resize(static_cast<size_t>(n)+1, { x, value1 });
 				break;
 			}
 		}

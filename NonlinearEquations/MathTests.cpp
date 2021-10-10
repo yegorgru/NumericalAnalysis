@@ -21,7 +21,7 @@ TEST_CASE("own example") {
         result = Math::Secant(function, precision, { 0.5, 1.5 });
     }
     REQUIRE(!result.empty());
-    CHECK(std::abs(result.back().first - 1) < precision);
+    CHECK(std::abs(result.back().first - 1) < 10 * precision);
     CHECK(result.back().second < precision);
 }
 
@@ -42,7 +42,7 @@ TEST_CASE("own example negative") {
         result = Math::Secant(function, precision, { -1.5, -0.5 });
     }
     REQUIRE(!result.empty());
-    CHECK(std::abs(result.back().first + 1) < 2*precision);
+    CHECK(std::abs(result.back().first + 1) < 10 * precision);
     CHECK(result.back().second < precision);
 }
 
@@ -65,7 +65,7 @@ TEST_CASE("first function") {
         result = Math::Secant(function, precision, { -1.3, -0.7 });
     }
     REQUIRE(!result.empty());
-    CHECK(std::abs(result.back().first + 1) < precision);
+    CHECK(std::abs(result.back().first + 1) < 10 * precision);
     CHECK(result.back().second < precision);
 }
 
@@ -88,7 +88,7 @@ TEST_CASE("second function") {
         result = Math::Secant(function, precision, { 0.6, 1.4 });
     }
     REQUIRE(!result.empty());
-    CHECK(std::abs(result.back().first - 1) < precision);
+    CHECK(std::abs(result.back().first - 1) < 10 * precision);
     CHECK(result.back().second < precision);
 }
 
