@@ -39,6 +39,28 @@ public:
 		return b;
 	}
 
+	static std::vector<double> TridiagonalMatrix(std::vector<std::vector<double>>& A, std::vector<double>& b)
+	{
+		if (A.size() == 0 || A.at(0).size() == 0) {
+			return {};
+		}
+		CheckRange(A);
+		CheckIndependence(A);
+		CheckTridiagonal(A);
+
+		for (size_t i = 1; i < A.size(); ++i) {
+			double w = A.at(i).at(i - 1) / A.at(i-1).at(i-1);
+			A.at(i).at(i) -= w * A.at(i - 1).at(i);
+			b.at(i) -= w * b.at(i - 1);
+		}
+		std::vector<double> answer(A.size(), 0);
+		answer.back() = b.back() / A.back().back();
+		for (int i = answer.size() - 2; i >= 0; --i) {
+			answer.at(i) = (b.at(i) - A.at(i).at(i + 1) * answer.at(i + 1)) / A.at(i).at(i);
+		}
+		return answer;
+	}
+
 	static void CheckIndependence(const std::vector<std::vector<double>>& A)
 	{
 		if (A.size() == 0 || A.at(0).size() == 0) {
@@ -66,6 +88,20 @@ public:
 					if (k == A.at(i).size() - 1) {
 						throw std::runtime_error("Dependent vectors");
 					}
+				}
+			}
+		}
+	}
+
+	static void CheckTridiagonal(const std::vector<std::vector<double>>& A)
+	{
+		if (A.size() < 3) {
+			return;
+		}
+		for (size_t i = 0; i < A.size(); ++i) {
+			for (size_t j = 0; j < A.at(i).size(); ++j) {
+				if (std::max(i, j) - std::min(i, j) > 1 && A.at(i).at(j) != 0.0) {
+					throw std::runtime_error("A is not tridiagonal");
 				}
 			}
 		}
