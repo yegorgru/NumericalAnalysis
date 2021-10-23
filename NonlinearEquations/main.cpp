@@ -11,7 +11,7 @@ int main()
     doctest::Context context;
     context.run();
 
-    using namespace NumericalCalculus;
+    using namespace NumericalAnalysis;
 
     std::cout << "========================================================================" << std::endl
         << "Relaxation:" << std::endl;

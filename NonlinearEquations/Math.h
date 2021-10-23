@@ -6,7 +6,7 @@
 
 #include "Polynomial.h"
 
-namespace NumericalCalculus
+namespace NumericalAnalysis
 {
 	using Iterations = std::vector<Point>;
 

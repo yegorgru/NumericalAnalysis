@@ -2,7 +2,7 @@
 
 #include "doctest.h"
 
-using namespace NumericalCalculus;
+using namespace NumericalAnalysis;
 
 TEST_CASE("own example") {
     double precision = 0.001;

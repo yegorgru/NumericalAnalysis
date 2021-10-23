@@ -1,6 +1,6 @@
 #include "Polynomial.h"
 
-namespace NumericalCalculus
+namespace NumericalAnalysis
 {
 
 	Polynomial::Polynomial(const Monomials& monomials) 
@@ -18,7 +18,7 @@ namespace NumericalCalculus
 		return value;
 	}
 
-	Polynomial NumericalCalculus::Polynomial::takeDerivative() const
+	Polynomial Polynomial::takeDerivative() const
 	{
 		Polynomial derivative;
 		for (const auto& [degree, coef] : mMonomials) {

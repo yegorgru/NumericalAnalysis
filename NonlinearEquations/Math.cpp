@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace NumericalCalculus
+namespace NumericalAnalysis
 {
 	Iterations Math::Relaxation(Polynomial polynomial, double precision, Interval interval)
 	{
