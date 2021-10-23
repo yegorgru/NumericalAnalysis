@@ -117,9 +117,9 @@ TEST_CASE("Jacobi test") {
         expectedResult = { 2.0, 3.0, 4.0, 5.0 };
     }
     auto result = LinearSystemSolver::Jacobi(A, b, precision);
-    REQUIRE(result.size() == expectedResult.size());
+    REQUIRE(result.back().size() == expectedResult.size());
     for (size_t i = 0; i < expectedResult.size(); ++i) {
-        CHECK(std::abs(expectedResult.at(i) - result.at(i)) < precision);
+        CHECK(std::abs(expectedResult.at(i) - result.back().at(i)) < precision);
     }
 }
 
@@ -157,8 +157,8 @@ TEST_CASE("UpperRelaxation test") {
         expectedResult = { 2.0, 3.0, 4.0, 5.0 };
     }
     auto result = LinearSystemSolver::UpperRelaxation(A, b, precision);
-    REQUIRE(result.size() == expectedResult.size());
+    REQUIRE(result.back().size() == expectedResult.size());
     for (size_t i = 0; i < expectedResult.size(); ++i) {
-        CHECK(std::abs(expectedResult.at(i) - result.at(i)) < precision);
+        CHECK(std::abs(expectedResult.at(i) - result.back().at(i)) < precision);
     }
 }

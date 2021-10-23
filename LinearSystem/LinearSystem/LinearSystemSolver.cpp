@@ -60,7 +60,7 @@ namespace NumericalAnalysis {
 		return answer;
 	}
 
-	std::vector<double> LinearSystemSolver::Jacobi(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision)
+	std::vector<std::vector<double>> LinearSystemSolver::Jacobi(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision)
 	{
 		if (A.size() == 0 || A.at(0).size() == 0) {
 			return {};
@@ -83,7 +83,9 @@ namespace NumericalAnalysis {
 			throw std::runtime_error("q >= 1, not convergent");
 		}*/
 		int n = q >= 1.0 ? 30 : std::log(precision * (1 - q)) / std::log(q) + 1;
+		
 		std::vector<double> answer(b.size(), 0);
+		std::vector<std::vector<double>> result{answer};
 		std::vector<double> nextAnswer(b.size(), 0);
 		for (int counter = 0; counter < n; ++counter) {
 			for (size_t i = 0; i < nextAnswer.size(); ++i) {
@@ -96,11 +98,12 @@ namespace NumericalAnalysis {
 				nextAnswer.at(i) = 1 / A.at(i).at(i) * (b.at(i) - sum);
 			}
 			answer = nextAnswer;
+			result.push_back(nextAnswer);
 		}
-		return nextAnswer;
+		return result;
 	}
 
-	std::vector<double> LinearSystemSolver::UpperRelaxation(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision)
+	std::vector<std::vector<double>> LinearSystemSolver::UpperRelaxation(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision)
 	{
 		if (A.size() == 0 || A.at(0).size() == 0) {
 			return {};
@@ -124,6 +127,7 @@ namespace NumericalAnalysis {
 		}*/
 		int n = 20;
 		std::vector<double> answer(b.size(), 0);
+		std::vector<std::vector<double>> result{ answer };
 		std::vector<double> nextAnswer(b.size(), 0);
 		double w = 1.5;
 		for (int counter = 0; counter < n; ++counter) {
@@ -138,8 +142,9 @@ namespace NumericalAnalysis {
 				nextAnswer.at(i) = (1 - w) * answer.at(i) + 1 / A.at(i).at(i) * w * (b.at(i) - sum);
 			}
 			answer = nextAnswer;
+			result.push_back(nextAnswer);
 		}
-		return nextAnswer;
+		return result;
 	}
 
 	void LinearSystemSolver::CheckRange(const std::vector<std::vector<double>>& A)

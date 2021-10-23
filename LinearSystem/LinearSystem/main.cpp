@@ -61,11 +61,13 @@ int main()
         };
         std::vector<double> b{ 25.0, 31.0, 19.0, 35.0 };
         auto result = LinearSystemSolver::Jacobi(A, b, 0.001);
-        std::cout << "(" << result.at(0);
-        for (size_t i = 1; i < result.size(); ++i) {
-            std::cout << ", " << result[i];
+        for (size_t i = 0; i < result.size(); ++i) {
+            std::cout << "Iteration " << i << ": (" << result.at(i).at(0);
+            for (size_t j = 1; j < result.at(i).size(); ++j) {
+                std::cout << ", " << result.at(i).at(j);
+            }
+            std::cout << ")" << std::endl;
         }
-        std::cout << ")" << std::endl;
     }
     std::cout << "========================================================================" << std::endl
         << "Upper relaxation method:" << std::endl;
@@ -78,10 +80,12 @@ int main()
         };
         std::vector<double> b{ 25.0, 31.0, 19.0, 35.0 };
         auto result = LinearSystemSolver::UpperRelaxation(A, b, 0.001);
-        std::cout << "(" << result.at(0);
-        for (size_t i = 1; i < result.size(); ++i) {
-            std::cout << ", " << result[i];
+        for (size_t i = 0; i < result.size(); ++i) {
+            std::cout << "Iteration " << i << ": (" << result.at(i).at(0);
+            for (size_t j = 1; j < result.at(i).size(); ++j) {
+                std::cout << ", " << result.at(i).at(j);
+            }
+            std::cout << ")" << std::endl;
         }
-        std::cout << ")" << std::endl;
     }
 }
