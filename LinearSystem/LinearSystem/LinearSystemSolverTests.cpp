@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-//using namespace NumericalAnalysis;
+using namespace NumericalAnalysis;
 
 TEST_CASE("GaussianElimination test") {
     std::vector<std::vector<double>> A;
