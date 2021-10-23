@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <stdexcept>
+#include <cmath>
 
 class LinearSystemSolver
 {
@@ -61,13 +62,71 @@ public:
 		return answer;
 	}
 
+	static std::vector<double> Jacobi(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision)
+	{
+		if (A.size() == 0 || A.at(0).size() == 0) {
+			return {};
+		}
+		CheckRange(A);
+		CheckIndependence(A);
+		CheckJacobi(A);
+
+		double q = -1.0;
+		for (size_t i = 0; i < A.size(); ++i) {
+			double sum = 0;
+			for (size_t j = 0; j < A.at(i).size(); ++j) {
+				if (i != j) {
+					sum += std::abs(A.at(i).at(j));
+				}
+			}
+			q = std::max(q, sum / std::abs(A.at(i).at(i)));
+		}
+		/*if (q >= 1.0) {
+			throw std::runtime_error("q >= 1, not convergent");
+		}*/
+		int n = q >= 1.0 ? 1000 : std::log(precision * (1 - q)) / std::log(q) + 1;
+		std::vector<double> answer(b.size(), 0);
+		std::vector<double> nextAnswer(b.size(), 0);
+		for (int counter = 0; counter < n; ++counter) {
+			for (size_t i = 0; i < nextAnswer.size(); ++i) {
+				double sum = 0;
+				for (size_t j = 0; j < nextAnswer.size(); ++j) {
+					if (i != j) {
+						sum += A.at(i).at(j) * answer.at(j);
+					}
+				}
+				nextAnswer.at(i) = 1 / A.at(i).at(i) * (b.at(i) - sum);
+			}
+			answer = nextAnswer;
+		}
+		return nextAnswer;
+	}
+
+private:
+	static void CheckRange(const std::vector<std::vector<double>>& A)
+	{
+		if (A.at(0).size() != A.size()) {
+			throw std::runtime_error("Incorrect size of A");
+		}
+		if (A.size() == 0) {
+			return;
+		}
+		size_t size = A.at(0).size();
+		for (size_t i = 1; i < A.size(); ++i) {
+			if (A.at(i).size() != size) {
+				throw std::runtime_error("Different length of vectors");
+			}
+
+		}
+	}
+
 	static void CheckIndependence(const std::vector<std::vector<double>>& A)
 	{
 		if (A.size() == 0 || A.at(0).size() == 0) {
 			return;
 		}
 		for (size_t i = 0; i < A.size(); ++i) {
-			for (size_t j = i+1; j < A.size(); ++j) {
+			for (size_t j = i + 1; j < A.size(); ++j) {
 				double coef = INT_MAX;
 				for (size_t k = 0; k < A.at(i).size(); ++k) {
 					if (A.at(j).at(k) == 0) {
@@ -107,21 +166,11 @@ public:
 		}
 	}
 
-private:
-	static void CheckRange(const std::vector<std::vector<double>>& A)
-	{
-		if (A.at(0).size() != A.size()) {
-			throw std::runtime_error("Incorrect size of A");
-		}
-		if (A.size() == 0) {
-			return;
-		}
-		size_t size = A.at(0).size();
-		for (size_t i = 1; i < A.size(); ++i) {
-			if (A.at(i).size() != size) {
-				throw std::runtime_error("Different length of vectors");
+	static void CheckJacobi(const std::vector<std::vector<double>>& A) {
+		for (size_t i = 0; i < A.size(); ++i) {
+			if (A.at(i).at(i) == 0) {
+				throw std::runtime_error("main diagonal has 0");
 			}
-
 		}
 	}
 };
