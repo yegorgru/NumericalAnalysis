@@ -122,3 +122,43 @@ TEST_CASE("Jacobi test") {
         CHECK(std::abs(expectedResult.at(i) - result.at(i)) < precision);
     }
 }
+
+TEST_CASE("UpperRelaxation test") {
+    std::vector<std::vector<double>> A;
+    std::vector<double> b;
+    std::vector<double> expectedResult;
+    double precision = 0.001;
+    SUBCASE("1") {
+        A = {
+            {1.0, 0.0, 0.0},
+            {0.0, 1.0, 0.0},
+            {0.0, 0.0, 1.0},
+        };
+        b = { 5.0, 4.0, 3.0 };
+        expectedResult = b;
+    }
+    SUBCASE("2") {
+        A = {
+            {1.0, 0.0, 0.0},
+            {1.0, 1.0, 0.0},
+            {0.0, 0.0, 1.0},
+        };
+        b = { 5.0, 4.0, 3.0 };
+        expectedResult = { 5.0, -1.0, 3.0 };
+    }
+    SUBCASE("3") {
+        A = {
+            {5.0, 1.0, 1.0, 0.0},
+            {1.0, 2.0, 0.0, 0.0},
+            {1.0, 0.0, 4.0, 2.0},
+            {0.0, 0.0, 2.0, 3.0},
+        };
+        b = { 17.0, 8.0, 28.0, 23.0 };
+        expectedResult = { 2.0, 3.0, 4.0, 5.0 };
+    }
+    auto result = LinearSystemSolver::UpperRelaxation(A, b, precision);
+    REQUIRE(result.size() == expectedResult.size());
+    for (size_t i = 0; i < expectedResult.size(); ++i) {
+        CHECK(std::abs(expectedResult.at(i) - result.at(i)) < precision);
+    }
+}

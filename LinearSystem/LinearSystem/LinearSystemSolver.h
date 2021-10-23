@@ -69,7 +69,7 @@ public:
 		}
 		CheckRange(A);
 		CheckIndependence(A);
-		CheckJacobi(A);
+		CheckZeroOnMainDiagonal(A);
 
 		double q = -1.0;
 		for (size_t i = 0; i < A.size(); ++i) {
@@ -84,7 +84,7 @@ public:
 		/*if (q >= 1.0) {
 			throw std::runtime_error("q >= 1, not convergent");
 		}*/
-		int n = q >= 1.0 ? 1000 : std::log(precision * (1 - q)) / std::log(q) + 1;
+		int n = q >= 1.0 ? 30 : std::log(precision * (1 - q)) / std::log(q) + 1;
 		std::vector<double> answer(b.size(), 0);
 		std::vector<double> nextAnswer(b.size(), 0);
 		for (int counter = 0; counter < n; ++counter) {
@@ -96,6 +96,48 @@ public:
 					}
 				}
 				nextAnswer.at(i) = 1 / A.at(i).at(i) * (b.at(i) - sum);
+			}
+			answer = nextAnswer;
+		}
+		return nextAnswer;
+	}
+
+	static std::vector<double> UpperRelaxation(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision)
+	{
+		if (A.size() == 0 || A.at(0).size() == 0) {
+			return {};
+		}
+		CheckRange(A);
+		CheckIndependence(A);
+		CheckZeroOnMainDiagonal(A);
+
+		double q = -1.0;
+		for (size_t i = 0; i < A.size(); ++i) {
+			double sum = 0;
+			for (size_t j = 0; j < A.at(i).size(); ++j) {
+				if (i != j) {
+					sum += std::abs(A.at(i).at(j));
+				}
+			}
+			q = std::max(q, sum / std::abs(A.at(i).at(i)));
+		}
+		/*if (q >= 1.0) {
+			throw std::runtime_error("q >= 1, not convergent");
+		}*/
+		int n = 20;
+		std::vector<double> answer(b.size(), 0);
+		std::vector<double> nextAnswer(b.size(), 0);
+		double w = 1.5;
+		for (int counter = 0; counter < n; ++counter) {
+			for (size_t i = 0; i < nextAnswer.size(); ++i) {
+				double sum = 0;
+				for (size_t j = 0; j < i; ++j) {
+					sum += A.at(i).at(j) * nextAnswer.at(j);
+				}
+				for (size_t j = i+1; j < nextAnswer.size(); ++j) {
+					sum += A.at(i).at(j) * answer.at(j);
+				}
+				nextAnswer.at(i) = (1 - w) * answer.at(i) + 1 / A.at(i).at(i) * w * (b.at(i) - sum);
 			}
 			answer = nextAnswer;
 		}
@@ -166,7 +208,7 @@ private:
 		}
 	}
 
-	static void CheckJacobi(const std::vector<std::vector<double>>& A) {
+	static void CheckZeroOnMainDiagonal(const std::vector<std::vector<double>>& A) {
 		for (size_t i = 0; i < A.size(); ++i) {
 			if (A.at(i).at(i) == 0) {
 				throw std::runtime_error("main diagonal has 0");
