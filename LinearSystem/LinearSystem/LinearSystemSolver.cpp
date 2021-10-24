@@ -103,7 +103,7 @@ namespace NumericalAnalysis {
 		return result;
 	}
 
-	std::vector<std::vector<double>> LinearSystemSolver::UpperRelaxation(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision)
+	std::vector<std::vector<double>> LinearSystemSolver::UpperRelaxation(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision, double w)
 	{
 		if (A.size() == 0 || A.at(0).size() == 0) {
 			return {};
@@ -122,6 +122,9 @@ namespace NumericalAnalysis {
 			}
 			q = std::max(q, sum / std::abs(A.at(i).at(i)));
 		}
+		if (w < 0.0 || w > 2.0) {
+			throw std::runtime_error("w < 0.0 or w > 2.0, not convergent");
+		}
 		/*if (q >= 1.0) {
 			throw std::runtime_error("q >= 1, not convergent");
 		}*/
@@ -129,7 +132,6 @@ namespace NumericalAnalysis {
 		std::vector<double> answer(b.size(), 0);
 		std::vector<std::vector<double>> result{ answer };
 		std::vector<double> nextAnswer(b.size(), 0);
-		double w = 1.5;
 		for (int counter = 0; counter < n; ++counter) {
 			for (size_t i = 0; i < nextAnswer.size(); ++i) {
 				double sum = 0;
@@ -145,6 +147,11 @@ namespace NumericalAnalysis {
 			result.push_back(nextAnswer);
 		}
 		return result;
+	}
+
+	std::vector<std::vector<double>> LinearSystemSolver::Seidel(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision)
+	{
+		return UpperRelaxation(A, b, precision, 1);
 	}
 
 	void LinearSystemSolver::CheckRange(const std::vector<std::vector<double>>& A)

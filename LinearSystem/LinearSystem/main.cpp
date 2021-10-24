@@ -79,7 +79,7 @@ int main()
             {0.0, 2.0, 1.0, 5.0},
         };
         std::vector<double> b{ 25.0, 31.0, 19.0, 35.0 };
-        auto result = LinearSystemSolver::UpperRelaxation(A, b, 0.001);
+        auto result = LinearSystemSolver::UpperRelaxation(A, b, 0.001, 1.5);
         for (size_t i = 0; i < result.size(); ++i) {
             std::cout << "Iteration " << i << ": (" << result.at(i).at(0);
             for (size_t j = 1; j < result.at(i).size(); ++j) {
