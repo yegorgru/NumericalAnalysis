@@ -59,14 +59,14 @@ namespace NumericalAnalysis
 		}
 		Point m = firstDerivative.findAbsMin(interval, precision);
 		Point M = secondDerivative.findAbsMax(interval, precision);
-		double x = interval.second;
+		double x = interval.first;
 		double maxMistake = std::max(std::abs(x - interval.second), std::abs(x - interval.first));
 		double q = M.second * maxMistake / 2 / m.second;
 		while (polynomial.getValue(x) * secondDerivative.getValue(x) <= 0 || q >= 1) {
-			x -= precision;
+			x += precision;
 			maxMistake = std::max(std::abs(x - interval.second), std::abs(x - interval.first));
 			q = M.second * maxMistake / 2 / m.second;
-			if (x < interval.first) {
+			if (x > interval.second) {
 				throw std::runtime_error("the conditions of the theorem cannot be satisfied");
 			}
 		}
@@ -146,6 +146,49 @@ namespace NumericalAnalysis
 				result.resize(static_cast<size_t>(n)+1, { x, value1 });
 				break;
 			}
+		}
+		return result;
+	}
+
+	Iterations Math::ModifiedNewton(Polynomial polynomial, double precision, Interval interval)
+	{
+		if (interval.first > interval.second ||
+			polynomial.getValue(interval.first) * polynomial.getValue(interval.second) > 0) {
+			throw std::runtime_error("incorrect interval");
+		}
+		Polynomial firstDerivative = polynomial.takeDerivative();
+		Polynomial secondDerivative = firstDerivative.takeDerivative();
+		if (secondDerivative.changeSign(interval, precision)) {
+			throw std::runtime_error("second derivative change sign");
+		}
+		Point m = firstDerivative.findAbsMin(interval, precision);
+		Point M = secondDerivative.findAbsMax(interval, precision);
+		double x = interval.first;
+		double maxMistake = std::max(std::abs(x - interval.second), std::abs(x - interval.first));
+		double q = M.second * maxMistake / 2 / m.second;
+		while (polynomial.getValue(x) * secondDerivative.getValue(x) <= 0 || q >= 1) {
+			x += precision;
+			maxMistake = std::max(std::abs(x - interval.second), std::abs(x - interval.first));
+			q = M.second * maxMistake / 2 / m.second;
+			if (x > interval.second) {
+				throw std::runtime_error("the conditions of the theorem cannot be satisfied");
+			}
+		}
+		int n = static_cast<int>(std::log2(
+			(std::log(maxMistake / precision)
+				/
+				std::log(1 / q) + 1)
+		) + 1);
+		double value = polynomial.getValue(x);
+		Iterations result{ {x, value} };
+		auto firstDValue = firstDerivative.getValue(x);
+		if (firstDValue == 0.0) {
+			throw std::runtime_error("value of first derivative has to be not 0");
+		}
+		for (int i = 0; i < n; i++) {
+			x = x - value / firstDValue;
+			value = polynomial.getValue(x);
+			result.emplace_back(x, value);
 		}
 		return result;
 	}

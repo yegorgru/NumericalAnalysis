@@ -16,6 +16,7 @@ namespace NumericalAnalysis {
 			for (size_t i = cur; i < A.size(); ++i) {
 				if (A.at(i).at(cur) != 0.0) {
 					A.at(cur).swap(A.at(i));
+					std::swap(b.at(cur), b.at(i));
 					break;
 				}
 			}
@@ -34,6 +35,44 @@ namespace NumericalAnalysis {
 				}
 				b.at(i) -= coef * b.at(cur);
 			}
+		}
+		return b;
+	}
+
+	std::vector<double> LinearSystemSolver::GaussianEliminationWithMain(std::vector<std::vector<double>>& A, std::vector<double>& b)
+	{
+		if (A.size() == 0 || A.at(0).size() == 0) {
+			return {};
+		}
+		CheckRange(A);
+		CheckIndependence(A);
+		for (size_t cur = 0; cur < A.size();) {
+			size_t row = cur;
+			double maxEl = std::abs(A.at(cur).at(row));
+			for (size_t i = row; i < A.size(); ++i) {
+				if (std::abs(A.at(i).at(row)) > maxEl) {
+					cur = i;
+					maxEl = std::abs(A.at(i).at(row));
+				}
+			}
+			double coef = A.at(cur).at(row);
+			for (size_t i = 0; i < A.at(cur).size(); ++i) {
+				A.at(cur).at(i) /= coef;
+			}
+			b.at(cur) /= coef;
+			for (size_t i = 0; i < A.size(); ++i) {
+				if (i == cur || A.at(i).at(row) == 0) {
+					continue;
+				}
+				double coef = A.at(i).at(row);
+				for (size_t k = 0; k < A.at(i).size(); ++k) {
+					A.at(i).at(k) -= coef * A.at(cur).at(k);
+				}
+				b.at(i) -= coef * b.at(cur);
+			}
+			A.at(cur).swap(A.at(row));
+			std::swap(b.at(cur), b.at(row));
+			cur = row + 1;
 		}
 		return b;
 	}
@@ -58,6 +97,63 @@ namespace NumericalAnalysis {
 			answer.at(i) = (b.at(i) - A.at(i).at(i + 1) * answer.at(i + 1)) / A.at(i).at(i);
 		}
 		return answer;
+	}
+
+	std::vector<double> LinearSystemSolver::CholeskyDecomposition(std::vector<std::vector<double>>& A, std::vector<double>& b)
+	{
+		if (A.size() == 0 || A.at(0).size() == 0) {
+			return {};
+		}
+		CheckRange(A);
+		CheckIndependence(A);
+		CheckSymmetry(A);
+		std::vector<double> D(A.size());
+		std::vector<std::vector<double>> S(A.size(), std::vector<double>(A.size(), 0.0));
+		for (size_t i = 0; i < D.size(); i++) {
+			double sum = 0;
+			for (size_t k = 0; k < i; ++k) {
+				sum += std::pow(S.at(k).at(i), 2) * D.at(k);
+			}
+			D.at(i) = A.at(i).at(i) - sum > 0 ? 1 : -1;
+			S.at(i).at(i) = std::sqrtf(std::abs(A.at(i).at(i) - sum));
+			for (size_t j = i + 1; j < A.size(); ++j) {
+				double sum1 = 0.0;
+				for (size_t k = 0; k < i; ++k) {
+					sum1 += S.at(k).at(i) * D.at(k) * S.at(k).at(j);
+				}
+				S.at(i).at(j) = (A.at(i).at(j) - sum1) / D.at(i) / S.at(i).at(i);
+			}
+		}
+		std::vector<std::vector<double>> StD = S;
+		for (size_t i = 0; i < StD.size(); ++i) {
+			for (size_t j = i+1; j < StD.size(); ++j) {
+				std::swap(StD.at(i).at(j), StD.at(j).at(i));
+			}
+		}
+		for (size_t i = 0; i < D.size(); ++i) {
+			if (D.at(i) < 0) {
+				for (size_t j = i; j < S.size(); ++j) {
+					StD.at(j).at(i) = -StD.at(j).at(i);
+				}
+			}
+		}
+		std::vector<double> y(A.size(), 0);
+		for (size_t i = 0; i < y.size(); ++i) {
+			double sum = 0;
+			for (size_t j = 0; j < i; ++j) {
+				sum += StD.at(i).at(j) * y.at(j);
+			}
+			y.at(i) = (b.at(i) - sum) / StD.at(i).at(i);
+		}
+		std::vector<double> result(A.size(), 0);
+		for (int i = result.size() - 1; i >= 0; --i) {
+			double sum = 0;
+			for (size_t j = result.size() - 1; j > i; --j) {
+				sum += S.at(i).at(j) * result.at(j);
+			}
+			result.at(i) = (y.at(i) - sum) / S.at(i).at(i);
+		}
+		return result;
 	}
 
 	std::vector<std::vector<double>> LinearSystemSolver::Jacobi(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision)
@@ -133,7 +229,7 @@ namespace NumericalAnalysis {
 		std::vector<std::vector<double>> result{ answer };
 		std::vector<double> nextAnswer(b.size(), 0);
 		for (int counter = 0; counter < n; ++counter) {
-			for (size_t i = 0; i < nextAnswer.size(); ++i) {
+ 			for (size_t i = 0; i < nextAnswer.size(); ++i) {
 				double sum = 0;
 				for (size_t j = 0; j < i; ++j) {
 					sum += A.at(i).at(j) * nextAnswer.at(j);
@@ -221,6 +317,17 @@ namespace NumericalAnalysis {
 		for (size_t i = 0; i < A.size(); ++i) {
 			if (A.at(i).at(i) == 0) {
 				throw std::runtime_error("main diagonal has 0");
+			}
+		}
+	}
+
+	void LinearSystemSolver::CheckSymmetry(const std::vector<std::vector<double>>& A)
+	{
+		for (size_t i = 0; i < A.size(); ++i) {
+			for (size_t j = i+1; j < A.at(i).size(); ++j) {
+				if (A.at(i).at(j) != A.at(j).at(i)) {
+					throw std::runtime_error("A is not symmetrical");
+				}
 			}
 		}
 	}

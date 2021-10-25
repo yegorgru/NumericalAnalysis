@@ -8,7 +8,9 @@ namespace NumericalAnalysis {
 	{
 	public:
 		static std::vector<double> GaussianElimination(std::vector<std::vector<double>>& A, std::vector<double>& b);
+		static std::vector<double> GaussianEliminationWithMain(std::vector<std::vector<double>>& A, std::vector<double>& b);
 		static std::vector<double> TridiagonalMatrix(std::vector<std::vector<double>>& A, std::vector<double>& b);
+		static std::vector<double> CholeskyDecomposition(std::vector<std::vector<double>>& A, std::vector<double>& b);
 		static std::vector<std::vector<double>> Jacobi(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision);
 		static std::vector<std::vector<double>> UpperRelaxation(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision, double w);
 		static std::vector<std::vector<double>> Seidel(std::vector<std::vector<double>>& A, std::vector<double>& b, double precision);
@@ -17,6 +19,7 @@ namespace NumericalAnalysis {
 		static void CheckIndependence(const std::vector<std::vector<double>>& A);
 		static void CheckTridiagonal(const std::vector<std::vector<double>>& A);
 		static void CheckZeroOnMainDiagonal(const std::vector<std::vector<double>>& A);
+		static void CheckSymmetry(const std::vector<std::vector<double>>& A);
 	};
 }
 

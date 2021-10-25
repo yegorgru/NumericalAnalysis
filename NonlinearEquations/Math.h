@@ -16,5 +16,6 @@ namespace NumericalAnalysis
 		static Iterations Relaxation(Polynomial polynomial, double precision, Interval interval);
 		static Iterations Newton(Polynomial polynomial, double precision, Interval interval);
 		static Iterations Secant(Polynomial polynomial, double precision, Interval interval);
+		static Iterations ModifiedNewton(Polynomial polynomial, double precision, Interval interval);
 	};
 }

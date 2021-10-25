@@ -13,8 +13,6 @@ int main()
     doctest::Context context;
     context.run();
 
-    //using namespace NumericalAnalysis;
-
     using namespace NumericalAnalysis;
 
     std::cout << "========================================================================" << std::endl
