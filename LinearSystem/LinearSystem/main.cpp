@@ -8,9 +8,127 @@
 
 #include "LinearSystemSolver.h"
 
+#include <cmath>
+
+double calculateF1(double x, double y) {
+    return std::sin(x - 0.6) - y - 1.6;
+}
+
+double calculateF2(double x, double y) {
+    return 3 * x - std::cos(y) - 0.9;
+}
+
+double getJacobi(int i, double arg) {
+    switch (i) {
+    case 1:
+        return std::cos(0.6 - arg);
+    case 2:
+        return -1;
+    case 3:
+        return 3;
+    case 4:
+        return std::sin(arg);
+    }
+}
+
+std::vector<double> multiplyMatrixVector(const std::vector<std::vector<double>>& A, const std::vector<double> b) {
+    std::vector<double> res(b.size(), 0);
+    for (size_t i = 0; i < A.size(); i++) {
+        for (size_t j = 0; j < A.at(i).size(); j++) {
+            res[i] += A[i][j] * b[j];
+        }
+    }
+    return res;
+}
+
+void solveNewtonNonLinear(double precision) {
+    double x = 1.25;
+    double y = 0;
+    int iter = 0;
+    while (std::abs(calculateF1(x, y)) > precision || std::abs(calculateF2(x, y)) > precision) {
+        std::cout << std::endl << "Iteration #" << iter++ << std::endl;
+        std::cout << "x: " << x << std::endl << "y: " << y << std::endl;
+        std::cout << "f1 (x, y): " << calculateF1(x, y) << std::endl;
+        std::cout << "f2 (x, y): " << calculateF2(x, y) << std::endl;
+        std::vector<double> b{ calculateF1(x, y), calculateF2(x, y) };
+        std::vector<std::vector<double>> A{
+            {getJacobi(1, x), getJacobi(2, y)},
+            {getJacobi(3, x), getJacobi(4, y)}
+        };
+        std::cout << "Jacobi: " << std::endl;
+        std::cout << A[0][0] << "\t" << A[0][1] << std::endl << A[1][0] << "\t\t" << A[1][1] << std::endl;
+        auto res = NumericalAnalysis::LinearSystemSolver::GaussianElimination(A, b);
+        std::cout << "z:(" << res[0] << ", " << res[1] << ")" << std::endl;
+        x -= res[0];
+        y -= res[1];
+    }
+    std::cout << std::endl << "Result: " << std::endl;
+    std::cout << "x: " << x << " y: " << y << std::endl;
+    std::cout << "f1 (x, y): " << calculateF1(x, y) << std::endl;
+    std::cout << "f2 (x, y): " << calculateF2(x, y);
+}
+
+void printVec(const std::vector<double>& vec) {
+    std::cout << "(";
+    for (size_t i = 0; i < vec.size() - 1; i++) {
+        std::cout << vec[i] << ", ";
+    }
+    std::cout << vec.back() << ")";
+}
+
+double scalarMult(const std::vector<double>& vec1, const std::vector<double>& vec2) {
+    double result = 0.0;
+    for (size_t i = 0; i < vec1.size(); i++) {
+        result += vec1[i] * vec2[i];
+    }
+    return result;
+}
+
+void solvePowerIteration(const std::vector<std::vector<double>>& A, double precision, bool approach) {
+    double a = -1;
+    for (size_t i = 0; i < A.size(); i++) {
+        double tryA = 0;
+        for (size_t j = 0; j < A.at(i).size(); j++) {
+            tryA += std::abs(A[i][j]);
+        }
+        a = std::max(a, tryA);
+    }
+    auto B = A;
+    for (auto& row : B) {
+        for (auto& b : row) {
+            b *= a;
+        }
+    }
+    std::vector<double> x0 = { 1, 1, 1 };
+    std::vector<double> x1 = multiplyMatrixVector(B, x0);
+    const size_t idx = 0;
+    int counter = 0;
+    double m0 = x0[idx];
+    std::cout << "x" << counter << ": ";
+    printVec(x0);
+    std::cout << std::endl;
+    std::cout << "m" << counter++ << ": " << m0 << std::endl;
+    double m1 = approach ? x1[idx] / x0[idx] : scalarMult(x1, x0) / scalarMult(x0, x0);
+    while (std::abs(m1 - m0) > precision) {
+        std::cout << "x" << counter << ": ";
+        printVec(x1);
+        std::cout << std::endl;
+        std::cout << "m" << counter++ << ": " << m1 << std::endl;
+        m0 = m1;
+        x1 = multiplyMatrixVector(B, x1);
+        m1 = approach ? x1[idx] / x0[idx] : scalarMult(x1, x0) / scalarMult(x0, x0);
+        x0 = x1;
+    }
+    std::cout << "x" << counter << ": ";
+    printVec(x1);
+    std::cout << std::endl;
+    std::cout << "Found max eigenvalue B = m" << counter << ": " << m1 << std::endl;
+    std::cout << "Min eigenvalue A = " << a - m1 << std::endl;
+}
+
 int main()
 {
-    doctest::Context context;
+    /*doctest::Context context;
     context.run();
 
     using namespace NumericalAnalysis;
@@ -85,5 +203,21 @@ int main()
             }
             std::cout << ")" << std::endl;
         }
-    }
+    }*/
+
+    std::cout << "===============================================================\nNewton:" << std::endl << std::endl;
+    solveNewtonNonLinear(0.001);
+    std::cout << "\n\n\n\n===============================================================\nPower iteration:" << std::endl << std::endl;
+    std::cout << "Approach 1:" << std::endl;
+    solvePowerIteration({
+        {1, (double)1 / 2, (double)1 / 3},
+        {(double)1 / 2, (double)1 / 3, (double)1 / 4},
+        {(double)1 / 3, (double)1 / 4, (double)1 / 5}
+        }, 0.001, true);
+    std::cout << "\n\n\nApproach 2:" << std::endl;
+    solvePowerIteration({
+        {1, (double)1 / 2, (double)1 / 3},
+        {(double)1 / 2, (double)1 / 3, (double)1 / 4},
+        {(double)1 / 3, (double)1 / 4, (double)1 / 5}
+        }, 0.001, false);
 }
