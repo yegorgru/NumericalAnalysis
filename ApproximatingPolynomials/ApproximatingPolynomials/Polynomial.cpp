@@ -33,7 +33,7 @@ namespace NumericalAnalysis
 		return Polynomial(result);
 	}
 
-	Polynomial::Polynomial(const Monomials& monomials) 
+	Polynomial::Polynomial(const Monomials& monomials)
 		: mMonomials(monomials)
 	{
 
@@ -105,7 +105,7 @@ namespace NumericalAnalysis
 
 	Point Polynomial::findAbsMin(Interval interval, double gaps) const
 	{
-		Point min{0, INT_MAX};
+		Point min{ 0, INT_MAX };
 		for (double i = interval.first; i <= interval.second; i += gaps) {
 			auto value = std::abs(getValue(i));
 			if (value < min.second) {

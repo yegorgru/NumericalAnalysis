@@ -135,3 +135,95 @@ TEST_CASE("min max test") {
     CHECK(std::abs(max.first - 2.0) < 0.000001);
     CHECK(std::abs(max.second - 3.0) < 0.000001);
 }
+
+TEST_CASE("multiply add test") {
+    {
+        Polynomial pol1({
+            { 3, 10 },
+            { 2, 1 },
+            { 0, -1 }
+        });
+        Polynomial pol2(Polynomial::Monomials{ { 0, 1 } });
+        CHECK(pol1.equal(Polynomial::multiply(pol1, pol2), 0.0001));
+    }
+    {
+        Polynomial pol1({
+            { 10, 2 },
+            { 4, -3 },
+            { 3, 10 },
+            { 2, 1 },
+            { 0, -1 }
+        });
+        Polynomial pol2({
+            { 13, 5 },
+            { 8, 2 },
+            { 6, -30 },
+            { 5, 1 },
+            { 2, 3 },
+            { 0, 5 }
+        });
+        Polynomial expected({
+            { 23, 10 },
+            { 18, 4 },
+            { 17, -15 },
+            { 16, -10 },
+            { 15, 7 },
+            { 13, -5 },
+            { 11, 20 },
+            { 10, 102 },
+            { 9, -303 },
+            { 8, -22 },
+            { 7, 1 },
+            { 6, 21 },
+            { 5, 29 },
+            { 4, -12 },
+            { 3, 50 },
+            { 2, 2 },
+            { 0, -5 }
+        });
+        Polynomial result = Polynomial::multiply(pol1, pol2);
+        CHECK(expected.equal(result, 0.0001));
+    }
+    {
+        Polynomial pol1({
+            { 3, 10 },
+            { 2, 1 },
+            { 0, -1 }
+            });
+        Polynomial pol2(Polynomial::Monomials{ { 0, 1 } });
+        Polynomial expected({
+            { 3, 10 },
+            { 2, 1 }
+            });
+        CHECK(expected.equal(Polynomial::add(pol1, pol2), 0.0001));
+    }
+    {
+        Polynomial pol1({
+            { 10, 2 },
+            { 4, -3 },
+            { 3, 10 },
+            { 2, 1 },
+            { 0, -1 }
+            });
+        Polynomial pol2({
+            { 13, 5 },
+            { 10, 2 },
+            { 6, -30 },
+            { 5, 1 },
+            { 2, 3 },
+            { 0, 5 }
+            });
+        Polynomial expected({
+            { 13, 5 },
+            { 10, 4 },
+            { 6, -30 },
+            { 5, 1 },
+            { 4, -3 },
+            { 3, 10 },
+            { 2, 4 },
+            { 0, 4 }
+            });
+        Polynomial result = Polynomial::add(pol1, pol2);
+        CHECK(expected.equal(result, 0.0001));
+    }
+}
