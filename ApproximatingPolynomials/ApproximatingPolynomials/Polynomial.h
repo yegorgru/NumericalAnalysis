@@ -23,17 +23,7 @@ namespace NumericalAnalysis
 		Polynomial(const Monomials& monomials);
 	public:
 		double getValue(double x) const;
-		Polynomial takeDerivative() const;
-		bool isPositive(Interval interval, double gaps) const;
-		bool isNegative(Interval interval, double gaps) const;
-		bool isIncreasing(Interval interval, double gaps) const;
-		bool isDecreasing(Interval interval, double gaps) const;
-		bool changeSign(Interval interval, double gaps) const;
-		Point findAbsMin(Interval interval, double gaps) const;
-		Point findAbsMax(Interval interval, double gaps) const;
-	public:
 		const Monomials& getMonomials() const;
-	public:
 		bool equal(const Polynomial& rhs, double precision) const;
 	private:
 		Monomials mMonomials;

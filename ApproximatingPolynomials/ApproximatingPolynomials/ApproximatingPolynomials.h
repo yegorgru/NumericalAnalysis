@@ -9,8 +9,7 @@ namespace NumericalAnalysis
 	{
 	public:
 		static Polynomial NewtonPolynomial(const Polynomial& function, int nodes, bool debug);
-	private:
-
+		static Polynomial DegreePolynomial(const Polynomial& function, int nodes, bool debug);
 	};
 
 }

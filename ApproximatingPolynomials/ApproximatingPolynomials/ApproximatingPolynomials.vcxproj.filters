@@ -24,12 +24,18 @@
     <ClCompile Include="Polynomial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LinearSystemSolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApproximatingPolynomials.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Polynomial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearSystemSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

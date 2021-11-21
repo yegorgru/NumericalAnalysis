@@ -1,9 +1,12 @@
 #include "ApproximatingPolynomials.h"
 
+#include "LinearSystemSolver.h"
+
 #include <map>
 #include <utility>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 namespace NumericalAnalysis
 {
@@ -66,6 +69,35 @@ Polynomial NumericalAnalysis::ApproximatingPolynomials::NewtonPolynomial(const P
         std::cout << std::endl;
     }
     return result;
+}
+
+Polynomial NumericalAnalysis::ApproximatingPolynomials::DegreePolynomial(const Polynomial& function, int nodes, bool debug)
+{
+    if (nodes == 0) return Polynomial();
+    std::vector<std::vector<double>> A(nodes, std::vector<double>(nodes, 0.0));
+    std::vector<double> b(nodes);
+    A[0][0] = 1;
+    b[0] = function.getValue(0);
+    for (int i = 1; i < nodes; i++) {
+        for (int j = 0; j < nodes; j++) {
+            A[i][j] = std::pow(i, j);
+        }
+        b[i] = function.getValue(i);
+    }
+    if (debug) {
+        for (size_t i = 0; i < nodes; i++) {
+            for (size_t j = 0; j < nodes; j++) {
+                std::cout << std::setw(14) << A[i][j];
+            }
+            std::cout << std::setw(5) << "|" << std::setw(5) << b[i] << std::endl;
+        }
+    }
+    auto result = LinearSystemSolver::GaussianElimination(A, b);
+    Polynomial::Monomials monomials;
+    for (int i = 0; i < nodes; i++) {
+        monomials[i] = result[i];
+    }
+    return Polynomial(monomials);
 }
 
 }

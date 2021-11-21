@@ -156,11 +156,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ApproximatingPolynomials.cpp" />
+    <ClCompile Include="LinearSystemSolver.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Polynomial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApproximatingPolynomials.h" />
+    <ClInclude Include="LinearSystemSolver.h" />
     <ClInclude Include="Polynomial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
