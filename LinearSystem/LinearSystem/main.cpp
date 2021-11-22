@@ -11,23 +11,23 @@
 #include <cmath>
 
 double calculateF1(double x, double y) {
-    return std::sin(x - 0.6) - y - 1.6;
+    return std::pow(x, 3) - 2*x + 5 - y;
 }
 
 double calculateF2(double x, double y) {
-    return 3 * x - std::cos(y) - 0.9;
+    return -std::pow(y, -2) - 3*std::pow(y, -2) - x;
 }
 
 double getJacobi(int i, double arg) {
     switch (i) {
     case 1:
-        return std::cos(0.6 - arg);
+        return 3 * std::pow(arg,2) - 2;
     case 2:
         return -1;
     case 3:
-        return 3;
+        return -1;
     case 4:
-        return std::sin(arg);
+        return (3*arg + 2) / std::pow(arg, 3);
     }
 }
 
@@ -42,8 +42,8 @@ std::vector<double> multiplyMatrixVector(const std::vector<std::vector<double>>&
 }
 
 void solveNewtonNonLinear(double precision) {
-    double x = 1.25;
-    double y = 0;
+    double x = -2;
+    double y = 0.1;
     int iter = 0;
     while (std::abs(calculateF1(x, y)) > precision || std::abs(calculateF2(x, y)) > precision) {
         std::cout << std::endl << "Iteration #" << iter++ << std::endl;
@@ -84,23 +84,23 @@ double scalarMult(const std::vector<double>& vec1, const std::vector<double>& ve
     return result;
 }
 
-void solvePowerIteration(const std::vector<std::vector<double>>& A, double precision, bool approach) {
-    double a = -1;
+double solvePowerIteration(const std::vector<std::vector<double>>& A, double precision, bool approach) {
+    /*double a = -1;
     for (size_t i = 0; i < A.size(); i++) {
         double tryA = 0;
         for (size_t j = 0; j < A.at(i).size(); j++) {
             tryA += std::abs(A[i][j]);
         }
         a = std::max(a, tryA);
-    }
-    auto B = A;
-    for (auto& row : B) {
+    }*/
+    //auto B = A;
+    /*for (auto& row : A) {
         for (auto& b : row) {
             b *= a;
         }
-    }
+    }*/
     std::vector<double> x0 = { 1, 1, 1 };
-    std::vector<double> x1 = multiplyMatrixVector(B, x0);
+    std::vector<double> x1 = multiplyMatrixVector(A, x0);
     const size_t idx = 0;
     int counter = 0;
     double m0 = x0[idx];
@@ -115,15 +115,16 @@ void solvePowerIteration(const std::vector<std::vector<double>>& A, double preci
         std::cout << std::endl;
         std::cout << "m" << counter++ << ": " << m1 << std::endl;
         m0 = m1;
-        x1 = multiplyMatrixVector(B, x1);
+        x1 = multiplyMatrixVector(A, x1);
         m1 = approach ? x1[idx] / x0[idx] : scalarMult(x1, x0) / scalarMult(x0, x0);
         x0 = x1;
     }
     std::cout << "x" << counter << ": ";
     printVec(x1);
     std::cout << std::endl;
-    std::cout << "Found max eigenvalue B = m" << counter << ": " << m1 << std::endl;
-    std::cout << "Min eigenvalue A = " << a - m1 << std::endl;
+    std::cout << "Found max eigenvalue " << counter << ": " << m1 << std::endl;
+    return m1;
+    //std::cout << "Min eigenvalue A = " << a - m1 << std::endl;
 }
 
 int main()
@@ -207,17 +208,5 @@ int main()
 
     std::cout << "===============================================================\nNewton:" << std::endl << std::endl;
     solveNewtonNonLinear(0.001);
-    std::cout << "\n\n\n\n===============================================================\nPower iteration:" << std::endl << std::endl;
-    std::cout << "Approach 1:" << std::endl;
-    solvePowerIteration({
-        {1, (double)1 / 2, (double)1 / 3},
-        {(double)1 / 2, (double)1 / 3, (double)1 / 4},
-        {(double)1 / 3, (double)1 / 4, (double)1 / 5}
-        }, 0.001, true);
-    std::cout << "\n\n\nApproach 2:" << std::endl;
-    solvePowerIteration({
-        {1, (double)1 / 2, (double)1 / 3},
-        {(double)1 / 2, (double)1 / 3, (double)1 / 4},
-        {(double)1 / 3, (double)1 / 4, (double)1 / 5}
-        }, 0.001, false);
+
 }

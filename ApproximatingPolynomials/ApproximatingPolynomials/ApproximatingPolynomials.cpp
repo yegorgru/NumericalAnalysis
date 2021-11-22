@@ -18,7 +18,8 @@ Polynomial NumericalAnalysis::ApproximatingPolynomials::NewtonPolynomial(const P
     if (debug) {
         std::cout << "function values and divided differences:" << std::endl;
     }
-    for (double node = -1.0; node < 0.999; node += range) {
+    std::vector<double> ran{ 1.0, 2.0, 3.0, 4.0, 5.0 };
+    for (double node : ran) {
         dividedDifferences.emplace_back(std::make_pair(node, node), function.getValue(node));
         if (debug) {
             std::cout << "f(" << node << ") = " << dividedDifferences.back().second << std::endl;
@@ -46,11 +47,11 @@ Polynomial NumericalAnalysis::ApproximatingPolynomials::NewtonPolynomial(const P
     if (debug) {
         std::cout << "\nPolynomial:\nP = f(" << dividedDifferences[0].first.first << ")";
     }
-    for (int iteration = 0; iteration < nodes; iteration++) {
+    for (int iteration = 0; iteration < nodes - 1; iteration++) {
         right += nodes - iteration;
         Polynomial nextPolynomial({ {0, dividedDifferences[right].second} });
         if (debug) {
-            std::cout << " + f(" << dividedDifferences[left].first.first << ", " << dividedDifferences[right].first.second << ")";
+            std::cout << " + f(" << dividedDifferences[right].first.first << ", " << dividedDifferences[right].first.second << ")";
         }
         for (int i = 0; i < iteration + 1; i++) {
             Polynomial multiplier({ 
